@@ -12,6 +12,19 @@ public class Collectible : MonoBehaviour
         
     [SerializeField] private CollectType type;
     private bool isCollected = false;
+    [SerializeField] private int diamondUID = -1;
+
+    private void Start()
+    {
+        foreach (int uid in GameManager.instance.collectedDiamonds)
+        {
+            if (diamondUID == uid)
+            {
+                isCollected = true;
+                break;
+            }
+        }
+    }
 
     public CollectType GetCollectType()
     {
@@ -21,5 +34,10 @@ public class Collectible : MonoBehaviour
     public bool IsCollected()
     {
         return isCollected;
+    }
+
+    public int GetDiamondUID()
+    {
+        return diamondUID;
     }
 }

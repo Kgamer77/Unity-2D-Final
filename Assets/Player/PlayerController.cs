@@ -122,7 +122,11 @@ public class PlayerController : MonoBehaviour
 
             if (collectible.GetCollectType() == Collectible.CollectType.Diamond)
             {
-                if (!collectible.IsCollected()) { GameManager.instance.diamonds += 1; }
+                if (!collectible.IsCollected()) 
+                {
+                    GameManager.instance.diamonds += 1;
+                    GameManager.instance.collectedDiamonds.Add(collectible.GetDiamondUID());
+                }
                 else { GameManager.instance.cherries += 20; }
             }
 

@@ -6301,6 +6301,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 870115081227226440, guid: 25f9681ee728cea47966b8901a814ba4, type: 3}
+      propertyPath: diamondUID
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2596281084054038043, guid: 25f9681ee728cea47966b8901a814ba4, type: 3}
       propertyPath: m_Name
       value: Diamond

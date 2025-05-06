@@ -19,7 +19,7 @@ public class StageUI : MonoBehaviour
     void Update()
     {
         TMP_Text score = cherryCount.GetComponent<TMP_Text>();
-        if (score != null) { score.text = $"{GameManager.instance.cherries}"; }
+        if (score != null) { score.text = $"x {GameManager.instance.cherries}"; }
     }
 
     public void UpdateHealth(int current, int max)
