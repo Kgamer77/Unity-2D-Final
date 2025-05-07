@@ -1,17 +1,21 @@
 using System;
+
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class PlayerController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private float jump = 1f;
-    [SerializeField] private float speed = 4f;
+    [SerializeField] private float Speed = 4f;
     [Range(0, 1)][SerializeField] private float crouchSpeed = .5f;
     [SerializeField] private bool airMovement = true;
     [SerializeField] private float gravity = 1.0f;
     [SerializeField] private LayerMask floor;
+    [SerializeField] private CircleCollider2D feetCollider;
 
     private bool isGrounded = true;
     private bool isJumping = false;
@@ -20,12 +24,11 @@ public class PlayerController : MonoBehaviour
     private bool isCrouching = false;
     private bool isClimbing = false;
     private bool facingLeft = false;
-    private float groundDetectRadius = .7f;
+    private float groundDetectRadius = 1f;
     private float standDetectRadius = 0.01f;
     private float invulnerabilityDuration = 0f;
-    private int health = 2;
+    private int health;
     private int MAX_HEALTH = 3;
-
 
     private Rigidbody2D body;
     private Animator animator;
@@ -37,39 +40,86 @@ public class PlayerController : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        //health = MAX_HEALTH;
+        //jumpDuration = JUMP_DURATION;
+        health = MAX_HEALTH;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 movement = new Vector2(Input.GetAxis("Horizontal") * speed * Time.deltaTime, body.linearVelocityY);
+        Vector2 movement = new Vector2(Input.GetAxis("Horizontal") * Speed * Time.deltaTime, body.linearVelocityY);
 
-        if ((isGrounded || jumpDuration > 0) && (Input.GetButton("Jump") && !isJumping))
+        if (Input.GetButton("Jump") && isGrounded)
         {
             //body.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
-            movement.y += jump;
             jumpDuration -= Time.deltaTime;
-        }
-
-
-        isGrounded = checkGrounded();
-
-        if (isGrounded)
-        {
-            jumpDuration = JUMP_DURATION;
-            isJumping = false;
-        }
-        else if (!isGrounded && !Input.GetButton("Jump"))
-        {
+            movement.y += jump;
+            //Debug.Log("pressing jump");
             isJumping = true;
         }
 
-        if (!isGrounded && isJumping)
+        //Detects Down input for crouching, affects animation and added to movement function - Brvnson
+        if (Input.GetAxis("Vertical") < 0)
         {
-            movement.y -= gravity * Time.deltaTime;
+            isCrouching = true;
+        }
+        else
+        {
+            isCrouching = false;
         }
 
+        //Left and Right movement - Brvnson
+        if (Input.GetAxis("Horizontal") > 0)
+        {
+            if (!isCrouching)
+            { movement.x = Speed; }
+            else
+            {
+                movement.x = crouchSpeed;
+            }
+        }
+        else if (Input.GetAxis("Horizontal") < 0)
+        {
+            if (!isCrouching)
+            { movement.x = -Speed; }
+            else
+            {
+                movement.x = -crouchSpeed;
+            }
+        }
+        else
+        {
+            movement.x = 0;
+        }
+
+        if (isGrounded)
+        {
+            isJumping = false;
+        }
+
+        //ticks invulnerability down is player is invulnerable (current amount = 2 sec of invulnerability - Brvnson
+        if(invulnerabilityDuration > 0)
+        {
+            invulnerabilityDuration -= 0.1f;
+        }
+        else
+        {
+            invulnerabilityDuration = 0;
+        }
+
+        if(invulnerabilityDuration > 3f)
+        {
+            movement.x = 0;
+            movement.y = 0;
+        }
+
+
+        //Debug.Log("invul dur = " + invulnerabilityDuration);
+
+        //Print Functions to help with Debugging - Brvnson
+        //Debug.Log("is grounded: " + isGrounded);
+        //Debug.Log("is jumping: " + isJumping);
+       
         if (!facingLeft && movement.x < 0)
         {
             facingLeft = true;
@@ -83,7 +133,24 @@ public class PlayerController : MonoBehaviour
 
         body.linearVelocity = movement;
         HandleAnimations();
+
+        //Debug.Log("y Velocity: " + body.linearVelocityY);
     }
+
+    void FixedUpdate()
+    {
+        isGrounded = CheckGrounded();
+    }
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if(collision.gameObject.CompareTag("Floor"))
+    //    {
+    //        isGrounded = true;
+    //        isJumping = false;
+    //        jumpDuration = JUMP_DURATION;
+    //    }
+    //}
 
     void HandleAnimations()
     {
@@ -97,10 +164,51 @@ public class PlayerController : MonoBehaviour
         ui.GetComponent<StageUI>().UpdateHealth(health, MAX_HEALTH);
     }
 
-    bool checkGrounded()
+    bool CheckGrounded()
     {
+        Vector2 rayOrigin = (Vector2)transform.position + feetCollider.offset;
         Debug.DrawLine(transform.position,transform.position + Vector3.down * groundDetectRadius);
-        return Physics2D.Raycast(transform.position, Vector2.down, groundDetectRadius, floor);
+
+        return Physics2D.Raycast(rayOrigin, Vector2.down, groundDetectRadius, floor).collider != null;
+    }
+
+    //Visual Indicator for floor detection - Brvnson
+    void OnDrawGizmos()
+    {
+        if (feetCollider == null)
+        {
+            return;
+        }
+        Vector2 rayOrigin = (Vector2)transform.position + feetCollider.offset;
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawRay(rayOrigin, Vector2.down * groundDetectRadius);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Hurt();
+        }
+    }
+
+
+    //Lowers player health when hurt and makes player invulnerable - Brvnson
+    public void Hurt()
+    {
+        if (invulnerabilityDuration == 0)
+        {
+            Health -= 2;
+            invulnerabilityDuration = 60f;
+            StartCoroutine("Invul");
+        }
+    }
+
+    IEnumerator Invul()
+    {
+        Physics2D.IgnoreLayerCollision(7, 8, true);
+        yield return new WaitForSeconds(3f);
+        Physics2D.IgnoreLayerCollision(7, 8, false);
     }
 
 
