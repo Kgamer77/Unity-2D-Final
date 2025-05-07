@@ -1,5 +1,8 @@
 using System;
+
 using System.Collections;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Rendering.FilterWindow;
 
@@ -13,7 +16,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravity = 1.0f;
     [SerializeField] private LayerMask floor;
     [SerializeField] private CircleCollider2D feetCollider;
-    [SerializeField] private int Health = 10;
 
     private bool isGrounded = true;
     private bool isJumping = false;
@@ -25,18 +27,21 @@ public class PlayerController : MonoBehaviour
     private float groundDetectRadius = 1f;
     private float standDetectRadius = 0.01f;
     private float invulnerabilityDuration = 0f;
-     
+    private int health;
+    private int MAX_HEALTH = 3;
 
     private Rigidbody2D body;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    [SerializeField] Canvas ui;
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        jumpDuration = JUMP_DURATION;
+        //jumpDuration = JUMP_DURATION;
+        health = MAX_HEALTH;
     }
 
     // Update is called once per frame
@@ -156,6 +161,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("climbing", isClimbing && body.linearVelocityY != 0);
         animator.SetBool("onLadder", isClimbing);
         animator.SetBool("damage", invulnerabilityDuration >= 0.3f);
+        ui.GetComponent<StageUI>().UpdateHealth(health, MAX_HEALTH);
     }
 
     bool CheckGrounded()
@@ -203,6 +209,44 @@ public class PlayerController : MonoBehaviour
         Physics2D.IgnoreLayerCollision(7, 8, true);
         yield return new WaitForSeconds(3f);
         Physics2D.IgnoreLayerCollision(7, 8, false);
+    }
+
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Collectible collectible = other.gameObject.GetComponent<Collectible>();
+        if (collectible != null)
+        {
+            if (collectible.GetCollectType() == Collectible.CollectType.Cherry)
+            {
+                GameManager.instance.cherries += 1;
+            }
+
+            if (collectible.GetCollectType() == Collectible.CollectType.Heart)
+            {
+                if (health < MAX_HEALTH) { health += 1; }
+                else { GameManager.instance.cherries += 10; }
+            }
+
+            if (collectible.GetCollectType() == Collectible.CollectType.Diamond)
+            {
+                if (!collectible.IsCollected()) 
+                {
+                    GameManager.instance.diamonds += 1;
+                    GameManager.instance.collectedDiamonds.Add(collectible.GetDiamondUID());
+                }
+                else { GameManager.instance.cherries += 20; }
+            }
+
+            while (GameManager.instance.cherries >= 100)
+            {
+                GameManager.instance.cherries -= 100;
+                GameManager.instance.lives += 1;
+            }
+
+            // Have the object play the collection animation then destroy itself as a coroutine
+            Destroy(other.gameObject);
+        }
     }
 
 }
