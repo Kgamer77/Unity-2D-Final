@@ -7,6 +7,7 @@ public class StageUI : MonoBehaviour
     [SerializeField] GameObject healthIndicator;
     [SerializeField] GameObject cherryCount;
     Component[] hearts;
+    [SerializeField] GameObject livesCount;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,6 +21,9 @@ public class StageUI : MonoBehaviour
     {
         TMP_Text score = cherryCount.GetComponent<TMP_Text>();
         if (score != null) { score.text = $"x {GameManager.instance.cherries}"; }
+        score = livesCount.GetComponent<TMP_Text>();
+        if (score != null) { score.text = $"x {GameManager.instance.lives}"; }
+
     }
 
     public void UpdateHealth(int current, int max)
@@ -30,4 +34,5 @@ public class StageUI : MonoBehaviour
             if (animator != null) { animator.SetBool("isEmpty", i >= current); }
         }
     }
+
 }

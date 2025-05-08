@@ -28,8 +28,7 @@ public class LevelPanel : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        Debug.Log("Clicked");
-        //SceneManager.LoadScene(levelIndex);
+        GetComponentInParent<LevelSelectUI>().GetSceneLoader().GetComponent<SceneLoader>().LoadNextScene(levelIndex);
     }
 
 }
