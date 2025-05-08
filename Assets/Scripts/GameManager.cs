@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
     public int lives = 3;
     public int cherries = 0;
     public HashSet<int> collectedDiamonds = new HashSet<int>();
+    public const int gameVictoryIndex = 2;
+    public const int gameOverIndex = 3;
+    public const int levelSelectIndex = 4;
 
     private void Awake()
     {

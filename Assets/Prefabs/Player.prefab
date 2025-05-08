@@ -558,15 +558,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0300e288e65548045acc9b7bd59efc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jump: 2.3
-  speed: 350
   crouchSpeed: 0.5003
   airMovement: 1
-  gravity: 0
   floor:
     serializedVersion: 2
     m_Bits: 64
-  JUMP_DURATION: 0.065
+  INVULNERABILITY_TIME: 2
   ui: {fileID: 6371392978235173377}
   sceneLoader: {fileID: 0}
 --- !u!50 &9100596136231444013
@@ -1005,9 +1002,9 @@ RectTransform:
   - {fileID: 1146533173617116211}
   m_Father: {fileID: 2231373266620466824}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -448.4}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5711613192799256897

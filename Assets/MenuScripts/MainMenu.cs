@@ -3,9 +3,17 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void GoToScene(string sceneName)
+    [SerializeField] private GameObject sceneLoader;
+    [SerializeField] private int sceneIndex;
+
+    public void GoToScene()
     {
-        SceneManager.LoadScene(sceneName);
+        sceneLoader.GetComponent<SceneLoader>().LoadNextScene(sceneIndex);
+    }
+
+    public void GotoMainMenu()
+    {
+        sceneLoader.GetComponent<SceneLoader>().LoadNextScene(0);
     }
 
     public void QuitApp()
