@@ -23,6 +23,7 @@ public class Collectible : MonoBehaviour
             if (diamondUID == uid)
             {
                 isCollected = true;
+                GetComponent<Animator>().SetBool("isCollected", isCollected);
                 break;
             }
         }
