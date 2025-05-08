@@ -6394,6 +6394,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5450209428361209275, guid: 01f71165e66c2734485088edd032fbc4, type: 3}
+      propertyPath: jump
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450209428361209275, guid: 01f71165e66c2734485088edd032fbc4, type: 3}
+      propertyPath: speed
+      value: 450
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450209428361209275, guid: 01f71165e66c2734485088edd032fbc4, type: 3}
+      propertyPath: gravity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450209428361209275, guid: 01f71165e66c2734485088edd032fbc4, type: 3}
       propertyPath: sceneLoader
       value: 
       objectReference: {fileID: 1024015208}

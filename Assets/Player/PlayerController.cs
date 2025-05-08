@@ -5,17 +5,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField] private float jump = 1f;
-    [SerializeField] private float speed = 4f;
+    private float jump = 2.3f;
+    private float speed = 350;
     [Range(0, 1)][SerializeField] private float crouchSpeed = .5f;
     [SerializeField] private bool airMovement = true;
-    [SerializeField] private float gravity = 1.0f;
+    private float gravity = 4f;
     [SerializeField] private LayerMask floor;
 
     private bool isGrounded = true;
     private bool isJumping = false;
-    [SerializeField] private float JUMP_DURATION = 0.5f;
-    private float jumpDuration = 0.5f;
+    private float JUMP_DURATION = 0.065f;
+    private float jumpDuration = 0f;
     private bool isCrouching = false;
     private bool isClimbing = false;
     private bool facingLeft = false;
@@ -47,15 +47,17 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 movement = new Vector2(Input.GetAxis("Horizontal") * speed * Time.deltaTime, body.linearVelocityY);
 
+        
+
+        // Handle grounded flag
+        isGrounded = CheckGrounded();
+
         if ((isGrounded || jumpDuration > 0) && (Input.GetButton("Jump") && !isJumping))
         {
             //body.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
             movement.y += jump;
             jumpDuration -= Time.deltaTime;
         }
-
-        // Handle grounded flag
-        isGrounded = CheckGrounded();
 
         // Handle jump
         if (isGrounded)
@@ -107,7 +109,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        Debug.Log("invul dur = " + invulnerabilityDuration);
+        //Debug.Log("invul dur = " + invulnerabilityDuration);
 
         //Print Functions to help with Debugging - Brvnson
         //Debug.Log("is grounded: " + isGrounded);
@@ -189,6 +191,11 @@ public class PlayerController : MonoBehaviour
             health -= 1;
             invulnerabilityDuration = INVULNERABILITY_TIME;
             //StartCoroutine("MakeInvincible");
+
+            if (health == 0)
+            {
+                sceneLoader.GetComponent<SceneLoader>().LoadNextScene(GameManager.gameOverIndex);
+            }
         }
     }
 
@@ -235,7 +242,7 @@ public class PlayerController : MonoBehaviour
 
             if (collectible.GetCollectType() == Collectible.CollectType.Goal)
             {
-                sceneLoader.GetComponent<SceneLoader>().LoadNextScene(0);
+                sceneLoader.GetComponent<SceneLoader>().LoadNextScene(GameManager.gameVictoryIndex);
                 return;
             }
 
