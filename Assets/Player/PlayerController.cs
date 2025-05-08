@@ -1,21 +1,16 @@
 using System;
-
 using System.Collections;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Rendering.FilterWindow;
 
 public class PlayerController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private float jump = 1f;
-    [SerializeField] private float Speed = 4f;
+    [SerializeField] private float speed = 4f;
     [Range(0, 1)][SerializeField] private float crouchSpeed = .5f;
     [SerializeField] private bool airMovement = true;
     [SerializeField] private float gravity = 1.0f;
     [SerializeField] private LayerMask floor;
-    [SerializeField] private CircleCollider2D feetCollider;
 
     private bool isGrounded = true;
     private bool isJumping = false;
@@ -24,9 +19,10 @@ public class PlayerController : MonoBehaviour
     private bool isCrouching = false;
     private bool isClimbing = false;
     private bool facingLeft = false;
-    private float groundDetectRadius = 1f;
+    private float groundDetectRadius = .7f;
     private float standDetectRadius = 0.01f;
     private float invulnerabilityDuration = 0f;
+    [SerializeField] private float INVULNERABILITY_TIME = 2f;
     private int health;
     private int MAX_HEALTH = 3;
 
@@ -34,6 +30,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     [SerializeField] Canvas ui;
+    [SerializeField] GameObject sceneLoader;
+    private Vector3 respawnPosition;
 
     void Start()
     {
@@ -47,19 +45,36 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 movement = new Vector2(Input.GetAxis("Horizontal") * Speed * Time.deltaTime, body.linearVelocityY);
+        Vector2 movement = new Vector2(Input.GetAxis("Horizontal") * speed * Time.deltaTime, body.linearVelocityY);
 
-        if (Input.GetButton("Jump") && isGrounded)
+        if ((isGrounded || jumpDuration > 0) && (Input.GetButton("Jump") && !isJumping))
         {
             //body.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
-            jumpDuration -= Time.deltaTime;
             movement.y += jump;
-            //Debug.Log("pressing jump");
+            jumpDuration -= Time.deltaTime;
+        }
+
+        // Handle grounded flag
+        isGrounded = CheckGrounded();
+
+        // Handle jump
+        if (isGrounded)
+        {
+            jumpDuration = JUMP_DURATION;
+            isJumping = false;
+        }
+        else if (!isGrounded && !Input.GetButton("Jump"))
+        {
             isJumping = true;
         }
 
-        //Detects Down input for crouching, affects animation and added to movement function - Brvnson
-        if (Input.GetAxis("Vertical") < 0)
+        if (!isGrounded && isJumping)
+        {
+            movement.y -= gravity * Time.deltaTime;
+        }
+
+        // Handle Crouching Flag
+        if (Input.GetButton("Crouch") && isGrounded)
         {
             isCrouching = true;
         }
@@ -68,28 +83,9 @@ public class PlayerController : MonoBehaviour
             isCrouching = false;
         }
 
-        //Left and Right movement - Brvnson
-        if (Input.GetAxis("Horizontal") > 0)
+        if (isCrouching)
         {
-            if (!isCrouching)
-            { movement.x = Speed; }
-            else
-            {
-                movement.x = crouchSpeed;
-            }
-        }
-        else if (Input.GetAxis("Horizontal") < 0)
-        {
-            if (!isCrouching)
-            { movement.x = -Speed; }
-            else
-            {
-                movement.x = -crouchSpeed;
-            }
-        }
-        else
-        {
-            movement.x = 0;
+            movement.x *= crouchSpeed;
         }
 
         if (isGrounded)
@@ -97,29 +93,27 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
         }
 
-        //ticks invulnerability down is player is invulnerable (current amount = 2 sec of invulnerability - Brvnson
+        // Ticks invulnerability down if player is invulnerable 
         if(invulnerabilityDuration > 0)
         {
-            invulnerabilityDuration -= 0.1f;
-        }
-        else
-        {
-            invulnerabilityDuration = 0;
+            invulnerabilityDuration -= Time.deltaTime;
         }
 
-        if(invulnerabilityDuration > 3f)
+        // Stuns player for one tenth of i-frames
+        if(invulnerabilityDuration > INVULNERABILITY_TIME * .9f)
         {
             movement.x = 0;
             movement.y = 0;
         }
 
 
-        //Debug.Log("invul dur = " + invulnerabilityDuration);
+        Debug.Log("invul dur = " + invulnerabilityDuration);
 
         //Print Functions to help with Debugging - Brvnson
         //Debug.Log("is grounded: " + isGrounded);
         //Debug.Log("is jumping: " + isJumping);
        
+        // Handles sprite flipping
         if (!facingLeft && movement.x < 0)
         {
             facingLeft = true;
@@ -131,15 +125,11 @@ public class PlayerController : MonoBehaviour
 
         spriteRenderer.flipX = facingLeft;
 
+        // Apply movement to rigidbody
         body.linearVelocity = movement;
         HandleAnimations();
 
         //Debug.Log("y Velocity: " + body.linearVelocityY);
-    }
-
-    void FixedUpdate()
-    {
-        isGrounded = CheckGrounded();
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)
@@ -160,29 +150,27 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("crouching", isCrouching);
         animator.SetBool("climbing", isClimbing && body.linearVelocityY != 0);
         animator.SetBool("onLadder", isClimbing);
-        animator.SetBool("damage", invulnerabilityDuration >= 0.3f);
+        animator.SetBool("damage", invulnerabilityDuration >= INVULNERABILITY_TIME * .9f);
         ui.GetComponent<StageUI>().UpdateHealth(health, MAX_HEALTH);
     }
 
     bool CheckGrounded()
     {
-        Vector2 rayOrigin = (Vector2)transform.position + feetCollider.offset;
-        Debug.DrawLine(transform.position,transform.position + Vector3.down * groundDetectRadius);
-
-        return Physics2D.Raycast(rayOrigin, Vector2.down, groundDetectRadius, floor).collider != null;
+        Debug.DrawLine(transform.position, transform.position + Vector3.down * groundDetectRadius);
+        return Physics2D.Raycast(transform.position, Vector2.down, groundDetectRadius, floor);
     }
 
     //Visual Indicator for floor detection - Brvnson
-    void OnDrawGizmos()
-    {
-        if (feetCollider == null)
-        {
-            return;
-        }
-        Vector2 rayOrigin = (Vector2)transform.position + feetCollider.offset;
-        Gizmos.color = isGrounded ? Color.green : Color.red;
-        Gizmos.DrawRay(rayOrigin, Vector2.down * groundDetectRadius);
-    }
+    //void OnDrawGizmos()
+    //{
+    //    if (feetCollider == null)
+    //    {
+    //        return;
+    //    }
+    //    Vector2 rayOrigin = (Vector2)transform.position + feetCollider.offset;
+    //    Gizmos.color = isGrounded ? Color.green : Color.red;
+    //    Gizmos.DrawRay(rayOrigin, Vector2.down * groundDetectRadius);
+    //}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -193,23 +181,23 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    //Lowers player health when hurt and makes player invulnerable - Brvnson
+    // Lowers player health when hurt and makes player invulnerable - Brvnson
     public void Hurt()
     {
-        if (invulnerabilityDuration == 0)
+        if (invulnerabilityDuration <= 0)
         {
-            //Health -= 2;
-            invulnerabilityDuration = 60f;
-            StartCoroutine("Invul");
+            health -= 1;
+            invulnerabilityDuration = INVULNERABILITY_TIME;
+            //StartCoroutine("MakeInvincible");
         }
     }
 
-    IEnumerator Invul()
-    {
-        Physics2D.IgnoreLayerCollision(7, 8, true);
-        yield return new WaitForSeconds(3f);
-        Physics2D.IgnoreLayerCollision(7, 8, false);
-    }
+    //IEnumerator MakeInvincible()
+    //{
+    //    Physics2D.IgnoreLayerCollision(7, 8, true);
+    //    yield return new WaitForSeconds(3f);
+    //    Physics2D.IgnoreLayerCollision(7, 8, false);
+    //}
 
 
     void OnTriggerEnter2D(Collider2D other)
@@ -230,12 +218,25 @@ public class PlayerController : MonoBehaviour
 
             if (collectible.GetCollectType() == Collectible.CollectType.Diamond)
             {
-                if (!collectible.IsCollected()) 
+                if (!collectible.IsCollected())
                 {
                     GameManager.instance.diamonds += 1;
                     GameManager.instance.collectedDiamonds.Add(collectible.GetDiamondUID());
                 }
                 else { GameManager.instance.cherries += 20; }
+            }
+
+            if (collectible.GetCollectType() == Collectible.CollectType.Flag)
+            {
+                respawnPosition = collectible.gameObject.transform.position;
+                collectible.gameObject.GetComponent<Animator>().SetBool("activated", true);
+                return;
+            }
+
+            if (collectible.GetCollectType() == Collectible.CollectType.Goal)
+            {
+                sceneLoader.GetComponent<SceneLoader>().LoadNextScene(0);
+                return;
             }
 
             while (GameManager.instance.cherries >= 100)
@@ -246,6 +247,7 @@ public class PlayerController : MonoBehaviour
 
             // Have the object play the collection animation then destroy itself as a coroutine
             Destroy(other.gameObject);
+        
         }
     }
 

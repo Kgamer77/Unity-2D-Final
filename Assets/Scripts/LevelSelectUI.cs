@@ -5,6 +5,7 @@ public class LevelSelectUI : MonoBehaviour
 {
     [SerializeField] GameObject diamondIcon;
     [SerializeField] GameObject diamondCount;
+    [SerializeField] GameObject sceneLoader;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,5 +19,10 @@ public class LevelSelectUI : MonoBehaviour
     {
         TMP_Text score = diamondCount.GetComponent<TMP_Text>();
         if (score != null) { score.text = $"x {GameManager.instance.diamonds}"; }
+    }
+
+    public GameObject GetSceneLoader()
+    {
+        return sceneLoader;
     }
 }

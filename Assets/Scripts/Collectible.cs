@@ -7,7 +7,9 @@ public class Collectible : MonoBehaviour
     {
         Cherry,
         Diamond,
-        Heart
+        Heart,
+        Flag,
+        Goal
     }
         
     [SerializeField] private CollectType type;

@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class BearWalk : MonoBehaviour
 {
-    [SerializeField] private float Speed = 2f;
+    [SerializeField] private float speed = 250f;
     private Rigidbody2D body;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-    public Transform[] points;
-    public int targetPoint;
+    private bool facingLeft = false;
+    [SerializeField] private LayerMask floor;
+    private float groundDetectRadius = 1f;
+    private float wallDetectRadius = 0.6f;
+    private float direction = 1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,36 +20,47 @@ public class BearWalk : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        targetPoint = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Vector2.Distance(transform.position, points[targetPoint].position) < 0.02f)
+        if (!CheckGrounded() || CheckWall())
         {
-            increaseTargetInt();
+            direction *= -1f;
         }
-        transform.position = Vector2.MoveTowards(transform.position, points[targetPoint].position, Speed * Time.deltaTime);
 
-        if(targetPoint == 1)
+        Vector2 movement = new Vector2( direction * speed * Time.deltaTime, body.linearVelocityY);
+        
+        // Handles sprite flipping
+        if (!facingLeft && movement.x < 0)
         {
-            spriteRenderer.flipX = true;
+            facingLeft = true;
         }
-        else
+        else if (facingLeft && movement.x > 0)
         {
-            spriteRenderer.flipX = false;
+            facingLeft = false;
         }
+
+        spriteRenderer.flipX = facingLeft;
+        body.linearVelocity = movement;
+
     }
 
-    void increaseTargetInt()
+    bool CheckGrounded()
     {
-        targetPoint++;
-        if(targetPoint >= points.Length)
-        {
-            targetPoint = 0;
-        }
+        Debug.DrawLine(transform.position + new Vector3(direction,0,0) * groundDetectRadius,
+            transform.position + new Vector3(direction, -1, 0) * groundDetectRadius);
+        return Physics2D.Raycast(transform.position + new Vector3(direction, 0, 0) * groundDetectRadius,
+            Vector2.down, groundDetectRadius, floor);
     }
+
+    bool CheckWall()
+    {
+        Debug.DrawLine(transform.position, transform.position + new Vector3(direction, 0, 0) * wallDetectRadius);
+        return Physics2D.Raycast(transform.position, new Vector3(direction, 0, 0), wallDetectRadius, floor);
+    }
+
 }
 
 
