@@ -198,7 +198,7 @@ public class PlayerController : MonoBehaviour
     {
         if (invulnerabilityDuration == 0)
         {
-            Health -= 2;
+            //Health -= 2;
             invulnerabilityDuration = 60f;
             StartCoroutine("Invul");
         }
