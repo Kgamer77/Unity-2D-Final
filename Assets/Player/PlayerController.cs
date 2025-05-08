@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     private bool isClimbing = false;
     private bool facingLeft = false;
     private float groundDetectRadius = .7f;
-    private float standDetectRadius = 0.01f;
+    //private float standDetectRadius = 0.01f;
     private float invulnerabilityDuration = 0f;
     [SerializeField] private float INVULNERABILITY_TIME = 2f;
     private int health;
