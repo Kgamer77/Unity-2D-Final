@@ -1,10 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class MainMenu : MonoBehaviour
+public class Credits : MonoBehaviour
 {
-    private bool isPaused = false;
+    public float scrollSpeed = 50f;
 
+    void Update()
+    {
+        transform.Translate(Vector3.up * scrollSpeed * Time.deltaTime);
+    }
+
+    // Scene navigation methods
     public void GotoMainMenu()
     {
         SceneManager.LoadScene(1);
@@ -24,12 +31,5 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("Game Application has quit.");
-    }
-
-    // Pause and resume functionality
-    public void TogglePause()
-    {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0 : 1;
     }
 }
