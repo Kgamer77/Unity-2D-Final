@@ -1242,6 +1242,10 @@ RectTransform:
   - {fileID: 980712910}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+  - {fileID: 1733993297}
+>>>>>>> Stashed changes
 =======
   - {fileID: 1733993297}
 >>>>>>> Stashed changes
@@ -1269,7 +1273,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1 &528283623
@@ -1349,6 +1356,9 @@ CanvasRenderer:
   m_GameObject: {fileID: 528283623}
   m_CullTransparentMesh: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -2454,7 +2464,10 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1 &1706003018
@@ -2609,6 +2622,9 @@ CanvasRenderer:
   m_GameObject: {fileID: 1733993296}
   m_CullTransparentMesh: 1
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
