@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     private float jump = 2.3f;
     private float speed = 350;
     [Range(0, 1)][SerializeField] private float crouchSpeed = .5f;
-    [SerializeField] private bool airMovement = true;
+    //[SerializeField] private bool airMovement = true;
     private float gravity = 4f;
     [SerializeField] private LayerMask floor;
 
@@ -215,12 +215,14 @@ public class PlayerController : MonoBehaviour
             if (collectible.GetCollectType() == Collectible.CollectType.Cherry)
             {
                 GameManager.instance.cherries += 1;
+                collectible.Collect();
             }
 
             if (collectible.GetCollectType() == Collectible.CollectType.Heart)
             {
                 if (health < MAX_HEALTH) { health += 1; }
                 else { GameManager.instance.cherries += 10; }
+                collectible.Collect();
             }
 
             if (collectible.GetCollectType() == Collectible.CollectType.Diamond)
@@ -231,6 +233,7 @@ public class PlayerController : MonoBehaviour
                     GameManager.instance.collectedDiamonds.Add(collectible.GetDiamondUID());
                 }
                 else { GameManager.instance.cherries += 20; }
+                collectible.Collect();
             }
 
             if (collectible.GetCollectType() == Collectible.CollectType.Flag)
@@ -251,9 +254,6 @@ public class PlayerController : MonoBehaviour
                 GameManager.instance.cherries -= 100;
                 GameManager.instance.lives += 1;
             }
-
-            // Have the object play the collection animation then destroy itself as a coroutine
-            Destroy(other.gameObject);
         
         }
     }

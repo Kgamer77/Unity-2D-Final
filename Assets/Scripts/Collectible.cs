@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Collectible : MonoBehaviour
@@ -42,5 +43,22 @@ public class Collectible : MonoBehaviour
     public int GetDiamondUID()
     {
         return diamondUID;
+    }
+
+    public void Collect()
+    {
+        StartCoroutine(DestroyAfterCollect());
+    }
+
+    IEnumerator DestroyAfterCollect()
+    {
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        collider.enabled = false;
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("collected");
+
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+
+        Destroy(gameObject);
     }
 }

@@ -5,35 +5,35 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject volumeSliderPanel; // UI panel holding volume slider
-    public Slider volumeSlider;          // Slider to adjust volume
-    public Button muteButton;            // Mute button
-    public Button toggleVolumeButton;    // Button to show/hide volume UI
-    public AudioMixer audioMixer;        // Audio Mixer controlling volume
+    //public GameObject volumeSliderPanel; // UI panel holding volume slider
+    //public Slider volumeSlider;          // Slider to adjust volume
+    //public Button muteButton;            // Mute button
+    //public Button toggleVolumeButton;    // Button to show/hide volume UI
+    //public AudioMixer audioMixer;        // Audio Mixer controlling volume
 
     private bool isPaused = false;
     private bool isMuted = false;
-    private float lastVolume = 0f; // Stores last volume before muting
+    //private float lastVolume = 0f; // Stores last volume before muting
 
-    void Start()
+    /*void Start()
     {
         // Initialize volume settings
-        float currentVolume;
-        audioMixer.GetFloat("MasterVolume", out currentVolume);
-        volumeSlider.value = currentVolume;
-        lastVolume = currentVolume;
+        //float currentVolume;
+        //audioMixer.GetFloat("MasterVolume", out currentVolume);
+        //volumeSlider.value = currentVolume;
+        //lastVolume = currentVolume;
 
         // Attach listener for slider value change
-        volumeSlider.onValueChanged.AddListener(SetVolume);
+        //volumeSlider.onValueChanged.AddListener(SetVolume);
 
         // Hide volume slider at start
-        volumeSliderPanel.SetActive(false);
+        //volumeSliderPanel.SetActive(false);
 
         // Attach mute/unmute function to button
-        muteButton.onClick.AddListener(ToggleMute);
+        //muteButton.onClick.AddListener(ToggleMute);
 
         // Attach toggle volume UI function to button
-        toggleVolumeButton.onClick.AddListener(ToggleVolumeUI);
+        //toggleVolumeButton.onClick.AddListener(ToggleVolumeUI);
     }
 
     // Toggle pause state
@@ -58,7 +58,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (!isMuted)
         {
-            audioMixer.SetFloat("MasterVolume", volume);
+            //audioMixer.SetFloat("MasterVolume", volume);
             lastVolume = volume; // Store last volume
         }
     }
@@ -70,15 +70,15 @@ public class PauseMenu : MonoBehaviour
 
         if (isMuted)
         {
-            audioMixer.SetFloat("MasterVolume", -80f); // Fully muted
+            //audioMixer.SetFloat("MasterVolume", -80f); // Fully muted
             muteButton.GetComponentInChildren<Text>().text = "Unmute"; // Update button text
         }
         else
         {
-            audioMixer.SetFloat("MasterVolume", lastVolume); // Restore last volume
+            //audioMixer.SetFloat("MasterVolume", lastVolume); // Restore last volume
             muteButton.GetComponentInChildren<Text>().text = "Mute"; // Update button text
         }
-    }
+    }*/
 
     // Scene navigation
     public void GotoMainMenu()

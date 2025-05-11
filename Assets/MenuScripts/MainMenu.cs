@@ -12,12 +12,12 @@ public class MainMenu : MonoBehaviour
 
     public void GoToGame()
     {
-        SceneManager.LoadScene(4);
+        SceneManager.LoadScene(GameManager.levelSelectIndex);
     }
 
     public void GoToCredits()
     {
-        SceneManager.LoadScene(7);
+        SceneManager.LoadScene(GameManager.creaditsIndex);
     }
 
     public void QuitApp()
