@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Canvas ui;
     [SerializeField] GameObject sceneLoader;
     private Vector3 respawnPosition;
+    private AudioSource music;
 
     void Start()
     {
@@ -40,6 +41,11 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         //jumpDuration = JUMP_DURATION;
         health = MAX_HEALTH;
+        if (GameManager.instance.passedMusic != null)
+        {
+            music = gameObject.AddComponent<AudioSource>();
+            music = AudioManager.instance.GetMusicPlayer(GameManager.instance.passedMusic, 1f);
+        }
     }
 
     // Update is called once per frame

@@ -16,16 +16,20 @@ public class Collectible : MonoBehaviour
     [SerializeField] private CollectType type;
     private bool isCollected = false;
     [SerializeField] private int diamondUID = -1;
+    [SerializeField] AudioClip collectSound;
 
     private void Start()
     {
-        foreach (int uid in GameManager.instance.collectedDiamonds)
+        if (type == CollectType.Diamond)
         {
-            if (diamondUID == uid)
+            foreach (int uid in GameManager.instance.collectedDiamonds)
             {
-                isCollected = true;
-                GetComponent<Animator>().SetBool("isCollected", isCollected);
-                break;
+                if (diamondUID == uid)
+                {
+                    isCollected = true;
+                    GetComponent<Animator>().SetBool("isCollected", isCollected);
+                    break;
+                }
             }
         }
     }
@@ -47,6 +51,7 @@ public class Collectible : MonoBehaviour
 
     public void Collect()
     {
+        AudioManager.instance.PlaySoundEffect(collectSound, transform, 2f, 0.3f);
         StartCoroutine(DestroyAfterCollect());
     }
 

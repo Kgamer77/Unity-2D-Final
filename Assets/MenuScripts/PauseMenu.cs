@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -11,8 +12,8 @@ public class PauseMenu : MonoBehaviour
     //public Button toggleVolumeButton;    // Button to show/hide volume UI
     //public AudioMixer audioMixer;        // Audio Mixer controlling volume
 
-    private bool isPaused = false;
-    private bool isMuted = false;
+    [SerializeField] AudioClip buttonSound;
+
     //private float lastVolume = 0f; // Stores last volume before muting
 
     /*void Start()
@@ -83,22 +84,32 @@ public class PauseMenu : MonoBehaviour
     // Scene navigation
     public void GotoMainMenu()
     {
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.3f);
         SceneManager.LoadScene(1);
     }
 
     public void GoToGame()
     {
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.3f);
         SceneManager.LoadScene(4);
     }
 
     public void GoToCredits()
     {
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.3f);
         SceneManager.LoadScene(7);
     }
 
     public void QuitApp()
     {
-        Application.Quit();
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.3f);
         Debug.Log("Game Application has quit.");
+        StartCoroutine(ExitGame());
+    }
+
+    IEnumerator ExitGame()
+    {
+        yield return new WaitForSeconds(buttonSound.length);
+        Application.Quit();
     }
 }

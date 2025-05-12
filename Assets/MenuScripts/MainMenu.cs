@@ -1,35 +1,61 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
-    private bool isPaused = false;
+    [SerializeField] private GameObject sceneLoader;
+    [SerializeField] AudioClip buttonSound;
+    [SerializeField] AudioClip menuMusic;
+    private AudioSource music;
 
+    private void Start()
+    {
+        music = gameObject.AddComponent<AudioSource>();
+        music = AudioManager.instance.GetMusicPlayer(menuMusic, 1f);
+        if (music != null)
+        {
+            GameManager.instance.passedMusic = menuMusic;
+        }
+        else 
+        {
+            if (GameManager.instance.passedMusic != null)
+            {
+                menuMusic = GameManager.instance.passedMusic;
+            }
+        }
+    }
     public void GotoMainMenu()
     {
-        SceneManager.LoadScene(1);
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.03f);
+        music.Stop();
+        GameManager.instance.timeStamp = music.time;
+        sceneLoader.GetComponent<SceneLoader>().LoadNextScene(1, buttonSound.length);
     }
 
     public void GoToGame()
     {
-        SceneManager.LoadScene(GameManager.levelSelectIndex);
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.03f);
+        sceneLoader.GetComponent<SceneLoader>().LoadNextScene(GameManager.levelSelectIndex, buttonSound.length);
     }
 
     public void GoToCredits()
     {
-        SceneManager.LoadScene(GameManager.creaditsIndex);
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.03f);
+        sceneLoader.GetComponent<SceneLoader>().LoadNextScene(GameManager.creaditsIndex, buttonSound.length);
     }
 
     public void QuitApp()
     {
-        Application.Quit();
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.03f);
         Debug.Log("Game Application has quit.");
+        StartCoroutine(ExitGame());
     }
 
-    // Pause and resume functionality
-    public void TogglePause()
+    IEnumerator ExitGame()
     {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0 : 1;
+        yield return new WaitForSeconds(buttonSound.length);
+        Application.Quit();
     }
+
+
 }
