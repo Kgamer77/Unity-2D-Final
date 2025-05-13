@@ -7,6 +7,8 @@ public class LevelPanel : MonoBehaviour
     [SerializeField] GameObject diamonds;
     [SerializeField] int[] diamondUIDs;
     private Animator[] icons;
+    [SerializeField] AudioClip levelMusic;
+    [SerializeField] AudioClip buttonSound;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -28,7 +30,9 @@ public class LevelPanel : MonoBehaviour
 
     public void OnButtonClicked()
     {
-        GetComponentInParent<LevelSelectUI>().GetSceneLoader().GetComponent<SceneLoader>().LoadNextScene(levelIndex);
+        AudioManager.instance.PlaySoundEffect(buttonSound, transform, 1f, 0.03f);
+        if (levelMusic != null) { GameManager.instance.passedMusic = levelMusic; }
+        GetComponentInParent<LevelSelectUI>().GetSceneLoader().GetComponent<SceneLoader>().LoadNextScene(levelIndex, buttonSound.length);
     }
 
 }

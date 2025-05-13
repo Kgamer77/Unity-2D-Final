@@ -199,3 +199,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  diamondUID: -1
+  collectSound: {fileID: 8300000, guid: 7cd9eb5ce83219c44b26d07eff93bb47, type: 3}
