@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      FloatingIslesThumbnail_0: -4559727869331802094
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
