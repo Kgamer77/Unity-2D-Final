@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private int health;
     private int MAX_HEALTH = 3;
     private float MAX_DEPTH = -25f;
+    private float MAX_FALL_SPEED = 15f;
 
     private Rigidbody2D body;
     private Animator animator;
@@ -143,6 +144,11 @@ public class PlayerController : MonoBehaviour
             transform.position = respawnPosition;
             body.linearVelocity = Vector2.zero;
             Hurt();
+        }
+
+        if (body.linearVelocityY < -MAX_FALL_SPEED)
+        {
+            body.linearVelocityY = -MAX_FALL_SPEED;
         }
 
         HandleAnimations();
