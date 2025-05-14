@@ -1263,6 +1263,7 @@ GameObject:
   - component: {fileID: 6560988850473294886}
   - component: {fileID: 8591771184736043721}
   - component: {fileID: 3216459534862814919}
+  - component: {fileID: 2275389129117527917}
   m_Layer: 5
   m_Name: PauseMenu
   m_TagString: Untagged
@@ -1329,6 +1330,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2275389129117527917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4847824646336448001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58371969bebf6284eafb2ef7bd03c5ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonSound: {fileID: 8300000, guid: 75f498173c3e800409c4e375c02a3582, type: 3}
 --- !u!1 &5302899918646721266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1931,11 +1945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58371969bebf6284eafb2ef7bd03c5ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volumeSliderPanel: {fileID: 0}
-  volumeSlider: {fileID: 0}
-  muteButton: {fileID: 0}
-  toggleVolumeButton: {fileID: 0}
-  audioMixer: {fileID: 0}
+  buttonSound: {fileID: 0}
 --- !u!1 &7653658382910805067
 GameObject:
   m_ObjectHideFlags: 0
