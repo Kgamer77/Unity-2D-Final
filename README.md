@@ -24,6 +24,7 @@ A 2D side-scrolling platformer with a focus on exploration using a level-by-leve
 - Sunnyland Assets
 
 ## Building From Source
+- BUILT USING `Unity 6000.0.38f1`
 - Download preffered source format `zip` or `tar.gz` from the releases tab or code tab under `<> Code`
 - In the Unity Hub Select `Add -> Add Project From Disk`
 - Navigate to the source directory and click `Open`
